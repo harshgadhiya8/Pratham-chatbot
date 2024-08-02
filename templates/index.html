@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pratham Q&A Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Pratham Q&A Bot</h1>
+        <div class="chat-box">
+            <div id="chat-log"></div>
+        </div>
+        <input type="text" id="question-input" placeholder="Ask a question...">
+        <button id="ask-button">Ask</button>
+    </div>
+
+    <script>
+        document.getElementById('ask-button').addEventListener('click', async () => {
+            const questionInput = document.getElementById('question-input');
+            const question = questionInput.value;
+            if (!question) return;
+
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question })
+            });
+
+            const data = await response.json();
+            const chatLog = document.getElementById('chat-log');
+            const questionElem = document.createElement('div');
+            questionElem.className = 'question';
+            questionElem.textContent = 'You: ' + question;
+            chatLog.appendChild(questionElem);
+
+            if (data.answer) {
+                const answerElem = document.createElement('div');
+                answerElem.className = 'answer';
+                answerElem.textContent = 'Bot: ' + data.answer;
+                chatLog.appendChild(answerElem);
+            } else {
+                const errorElem = document.createElement('div');
+                errorElem.className = 'error';
+                errorElem.textContent = 'Bot: ' + data.error;
+                chatLog.appendChild(errorElem);
+            }
+
+            questionInput.value = '';
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,5 @@
+Flask
+openai
+spacy
+beautifulsoup4
+requests
